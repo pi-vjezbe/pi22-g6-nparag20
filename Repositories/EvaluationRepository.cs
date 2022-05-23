@@ -14,7 +14,7 @@ namespace Evaluation_Manager.Repositories
         public static Evaluation GetEvaluation(Student student, Activity activity)
         {
             Evaluation evaluation = null;
-            string sql= $"SELECT * FROM Evaluations WHERE IdStudents = {student.Id} AND IdActivities = {activity.Id} ";
+            string sql = $"SELECT * FROM Evaluations WHERE IdStudents = {student.Id} AND IdActivities = { activity.Id}";
             DB.OpenConnection();
             var reader = DB.GetDataReader(sql);
             if (reader.HasRows)
@@ -27,6 +27,7 @@ namespace Evaluation_Manager.Repositories
             DB.CloseConnection();
             return evaluation;
         }
+
         public static List<Evaluation> GetEvaluations(Student student)
         {
             List<Evaluation> evaluations = new List<Evaluation>();
@@ -46,6 +47,7 @@ namespace Evaluation_Manager.Repositories
 
             return evaluations;
         }
+
         private static Evaluation CreateObject(SqlDataReader reader)
         {
             int idActivities = int.Parse(reader["IdActivities"].ToString());
@@ -72,7 +74,22 @@ namespace Evaluation_Manager.Repositories
 
             return evaluation;
         }
-    }
-     
-}
 
+        public static void InsertEvaluation(Student student, Activity activity, Teacher teacher, int points)
+        {
+            string sql = $"INSERT INTO Evaluations (IdActivities, IdStudents, IdTeachers, EvaluationDate, Points) VALUES ({activity.Id}, {student.Id}, {teacher.Id}, GETDATE(), {points})";
+            DB.OpenConnection();
+            DB.ExecuteCommand(sql);
+            DB.CloseConnection();
+        }
+
+        public static void UpdateEvaluation(Evaluation evaluation, Teacher teacher, int points)
+        {
+            string sql = $"UPDATE Evaluations SET IdTeachers = {teacher.Id},  Points = { points}, EvaluationDate = GETDATE() WHERE IdActivities = {evaluation.Activity.Id} AND IdStudents = { evaluation.Student.Id }";
+            DB.OpenConnection();
+            DB.ExecuteCommand(sql);
+            DB.CloseConnection();
+        }
+
+    }
+}

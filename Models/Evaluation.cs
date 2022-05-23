@@ -24,4 +24,5 @@ namespace Evaluation_Manager.Models
             return Points >= Activity.MinPointsForSignature;
         }
     }
+
 }
